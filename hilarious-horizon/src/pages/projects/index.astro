@@ -1,0 +1,36 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("projects");
+---
+
+<Layout>
+  <div class="container">
+    <h1>Projects</h1>
+    <div>
+      <ul>
+        {
+          posts.map((post) => (
+            <li class="item">
+              <b>{post.data.title}</b> <br />
+              <a href={`/projects/${post.id}`}>Read More</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  .item {
+    margin-bottom: 1rem;
+    list-style: none;
+  }
+</style>

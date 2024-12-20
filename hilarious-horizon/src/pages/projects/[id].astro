@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const projectEntries = await getCollection("projects");
+  return projectEntries.map((entry) => ({
+    params: { id: entry.id },
+  }));
+}
+
+const { id } = Astro.params;
+
+const projectPost = await getCollection("projects").then((posts) =>
+  posts.find((post) => post.id === id)
+);
+
+if (!projectPost) {
+  throw new Error(`project post with slug "${id}" not found.`);
+}
+
+const { data, rendered } = projectPost;
+---
+
+<Layout>
+  <main class="container">
+    <h1>{data.title}</h1>
+    <div class="mt-8">
+      <article set:html={rendered?.html} />
+    </div>
+  </main>
+</Layout>

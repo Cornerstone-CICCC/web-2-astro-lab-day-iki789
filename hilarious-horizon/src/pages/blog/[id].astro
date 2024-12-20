@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection("blog");
+  return blogEntries.map((entry) => ({
+    params: { id: entry.id },
+  }));
+}
+
+const { id } = Astro.params;
+
+const blogPost = await getCollection("blog").then((posts) =>
+  posts.find((post) => post.id === id)
+);
+
+console.log({ blogPost });
+
+if (!blogPost) {
+  throw new Error(`Blog post with slug "${id}" not found.`);
+}
+
+const { data, rendered } = blogPost;
+---
+
+<Layout>
+  <main class="container">
+    <h1>{data.title}</h1>
+    <div class="mt-8">
+      <article set:html={rendered?.html} />
+    </div>
+  </main>
+</Layout>
